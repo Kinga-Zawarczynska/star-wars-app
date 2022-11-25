@@ -1,16 +1,18 @@
 import { Fragment, useEffect, useState } from "react";
 import "./App.scss";
+import PersonCard from "./components/PersonCard";
 import { fetchApi } from "./services/fetchSwapi";
+import { IPerson } from "./types/Person";
 
 function App() {
   const [param, setParam] = useState("people");
-  const [people, setPeople] = useState([]);
+  const [data, setData] = useState<IPerson[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchApi(param)
       .then((res) => {
-        setPeople(res.results);
+        setData(res.results);
       })
       .catch((err) => {
         console.log(err);
@@ -19,6 +21,8 @@ function App() {
   }, [param]);
 
   const handlePeopleClick = () => setParam("people");
+  const handlePlanetsClick = () => setParam("planets");
+  const handleStarshipsClick = () => setParam("starships");
 
   if (error) {
     return <div>{error}</div>;
@@ -36,8 +40,15 @@ function App() {
           </p>
           <p>Find your warriors, safe planet or starship you want to join!</p>
         </span>
-        <button onClick={handlePeopleClick}>Show warriors</button>
+        <div className="app__header--buttons">
+          <button onClick={handlePeopleClick}>Show warriors</button>
+          <button onClick={handlePlanetsClick}>Show planets</button>
+          <button onClick={handleStarshipsClick}>Show starships</button>
+        </div>
       </header>
+      <main className="app__main">
+        {(param === 'people') && data.map(person => <PersonCard person={person} />)}
+      </main>
     </Fragment>
   );
 }
