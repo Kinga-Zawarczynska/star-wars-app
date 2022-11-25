@@ -1,11 +1,15 @@
 import { URL } from "../contants";
 
-export const fetchApi = async (param: string): Promise<{results: any, count: number, next: string, previous: string}> => {
-  let headers = { "Content-Type": "application/json" };
-  const fetchUrl = `${URL}${param}`
+const headers = { "Content-Type": "application/json" };
+
+export const fetchApi = async (
+  param: string
+): Promise<{ results: any; count: number; next: string }> => {
+  const fetchUrl = `${URL}${param}`;
 
   return fetch(fetchUrl, {
     headers,
+    mode: 'cors'
   })
     .then((resp) => resp.json())
     .then((data) => {
@@ -13,13 +17,29 @@ export const fetchApi = async (param: string): Promise<{results: any, count: num
         count: data.count,
         results: data.results,
         next: data.next,
-        previous: data.previous,
       });
       return {
         count: data.count,
         results: data.results,
         next: data.next,
-        previous: data.previous,
+      };
+    });
+};
+
+export const fetchNextPage = async (url: string | null) => {
+  if (!url) {
+    return null;
+  }
+  return fetch(url, {
+    headers,
+    mode: 'cors'
+  })
+    .then((resp) => resp.json())
+    .then((data) => {
+      return {
+        count: data.count,
+        results: data.results,
+        next: data.next,
       };
     });
 };

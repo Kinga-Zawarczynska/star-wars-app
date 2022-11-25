@@ -1,18 +1,22 @@
 import { Fragment, useEffect, useState } from "react";
 import "./App.scss";
 import PersonCard from "./components/PersonCard";
-import { fetchApi } from "./services/fetchSwapi";
+import { fetchApi, fetchNextPage } from "./services/fetchSwapi";
 import { IPerson } from "./types/Person";
 
 function App() {
   const [param, setParam] = useState("people");
-  const [data, setData] = useState<IPerson[]>([]);
+  const [data, setData] = useState<{
+    count: number | null;
+    next: string | null;
+    results: IPerson[];
+  }>({ count: null, next: null, results: [] });
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchApi(param)
       .then((res) => {
-        setData(res.results);
+        setData({ count: res.count, next: res.next, results: res.results });
       })
       .catch((err) => {
         console.log(err);
@@ -23,6 +27,15 @@ function App() {
   const handlePeopleClick = () => setParam("people");
   const handlePlanetsClick = () => setParam("planets");
   const handleStarshipsClick = () => setParam("starships");
+
+  const handleLoadMoreData = () =>
+    fetchNextPage(data.next).then((res) =>
+      setData({
+        count: res?.count,
+        next: res?.next,
+        results: [...data.results, ...res?.results],
+      })
+    );
 
   if (error) {
     return <div>{error}</div>;
@@ -47,7 +60,11 @@ function App() {
         </div>
       </header>
       <main className="app__main">
-        {(param === 'people') && data.map(person => <PersonCard person={person} />)}
+        {param === "people" &&
+          data.results.map((person) => <PersonCard person={person} />)}
+        {data.next && (
+          <button onClick={handleLoadMoreData}>LOAD MORE DATA</button>
+        )}
       </main>
     </Fragment>
   );
