@@ -1,4 +1,5 @@
 import { URL } from "../contants";
+import { IPerson } from "../types/Person";
 
 const headers = { "Content-Type": "application/json" };
 
@@ -9,7 +10,7 @@ export const fetchApi = async (
 
   return fetch(fetchUrl, {
     headers,
-    mode: 'cors'
+    mode: "cors",
   })
     .then((resp) => resp.json())
     .then((data) => {
@@ -32,7 +33,7 @@ export const fetchNextPage = async (url: string | null) => {
   }
   return fetch(url, {
     headers,
-    mode: 'cors'
+    mode: "cors",
   })
     .then((resp) => resp.json())
     .then((data) => {
@@ -41,5 +42,20 @@ export const fetchNextPage = async (url: string | null) => {
         results: data.results,
         next: data.next,
       };
+    });
+};
+
+export const fetchPerson = async (url: string): Promise<IPerson | null> => {
+  console.log(url);
+  if (!url) {
+    return null;
+  }
+  return fetch(url, {
+    headers,
+    mode: "cors",
+  })
+    .then((resp) => resp.json())
+    .then((data) => {
+      return data;
     });
 };

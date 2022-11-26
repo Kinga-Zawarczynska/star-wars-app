@@ -4,6 +4,7 @@ import List from "./components/List";
 import { PEOPLE, PLANETS, STARSHIPS } from "./contants";
 import { fetchApi, fetchNextPage } from "./services/fetchSwapi";
 import { IData } from "./types/Data";
+import bb8Spinner from './images/bb8-spinner.svg';
 
 function App() {
   const initialState = {
@@ -16,6 +17,8 @@ function App() {
   const [data, setData] = useState<IData>(initialState);
   const [error, setError] = useState<string | null>(null);
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     if (data[param as keyof IData].results.length === 0) {
       fetchApi(param)
@@ -24,6 +27,7 @@ function App() {
             ...data,
             [param]: { count: res.count, next: res.next, results: res.results },
           });
+          setLoading(false);
         })
         .catch((err) => {
           console.log(err);
@@ -50,6 +54,13 @@ function App() {
 
   if (error) {
     return <div>{error}</div>;
+  }
+
+  if (loading) {
+    return <div>
+      loading...
+      <img src={bb8Spinner} alt="bb8SpinnerLoading" />
+    </div>
   }
 
   return (
