@@ -1,5 +1,6 @@
 import { Fragment, useEffect, useState } from "react";
 import "./App.scss";
+import List from "./components/List";
 import PersonCard from "./components/PersonCard";
 import { PEOPLE, PLANETS, STARSHIPS } from "./contants";
 import { fetchApi, fetchNextPage } from "./services/fetchSwapi";
@@ -20,7 +21,10 @@ function App() {
     if (data[param as keyof IData].results.length === 0) {
       fetchApi(param)
         .then((res) => {
-          setData({ ...data, [param]: {count: res.count, next: res.next, results: res.results} });
+          setData({
+            ...data,
+            [param]: { count: res.count, next: res.next, results: res.results },
+          });
         })
         .catch((err) => {
           console.log(err);
@@ -35,11 +39,14 @@ function App() {
 
   const handleLoadMoreData = () =>
     fetchNextPage(data[param as keyof IData].next).then((res) =>
-      setData({...data, [param]: {
-        count: res?.count,
-        next: res?.next,
-        results: [...data[param as keyof IData].results, ...res?.results],
-      } })
+      setData({
+        ...data,
+        [param]: {
+          count: res?.count,
+          next: res?.next,
+          results: [...data[param as keyof IData].results, ...res?.results],
+        },
+      })
     );
 
   if (error) {
@@ -65,11 +72,14 @@ function App() {
         </div>
       </header>
       <main className="app__main">
-        {param === "people" &&
-          data[PEOPLE].results.map((person) => <PersonCard person={person} />)}
-        {data[param as keyof IData].next && (
-          <button onClick={handleLoadMoreData}>LOAD MORE DATA</button>
-        )}
+        <>
+           List of {param}
+           <List param={param} starships={data.starships?.results} people={data.people?.results} />
+
+          {data[param as keyof IData].next && (
+            <button onClick={handleLoadMoreData}>LOAD MORE DATA</button>
+          )}
+        </>
       </main>
     </Fragment>
   );
