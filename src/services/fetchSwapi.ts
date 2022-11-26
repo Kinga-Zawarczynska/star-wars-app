@@ -14,11 +14,6 @@ export const fetchApi = async (
   })
     .then((resp) => resp.json())
     .then((data) => {
-      console.log({
-        count: data.count,
-        results: data.results,
-        next: data.next,
-      });
       return {
         count: data.count,
         results: data.results,
@@ -46,7 +41,6 @@ export const fetchNextPage = async (url: string | null) => {
 };
 
 export const fetchPerson = async (url: string): Promise<IPerson | null> => {
-  console.log(url);
   if (!url) {
     return null;
   }
