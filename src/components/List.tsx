@@ -19,7 +19,7 @@ const List = ({ param, starships, people, planets }: ListType) => {
     return (
       <div>
         {people.map((person: IPerson) => (
-          <PersonCard person={person} />
+          <PersonCard person={person} key={person.name} />
         ))}
       </div>
     );
@@ -29,7 +29,7 @@ const List = ({ param, starships, people, planets }: ListType) => {
     return (
       <div>
         {starships.map((starship: IStarship) => (
-          <StarshipCard starship={starship} />
+          <StarshipCard starship={starship} key={starship.name} />
         ))}
       </div>
     );
@@ -39,7 +39,7 @@ const List = ({ param, starships, people, planets }: ListType) => {
     return (
       <div>
         {planets.map((planet: IPLanet) => (
-          <PlanetCard planet={planet} />
+          <PlanetCard planet={planet} key={planet.name} />
         ))}
       </div>
     );

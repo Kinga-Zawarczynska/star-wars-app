@@ -35,7 +35,7 @@ const StarshipCard = ({ starship }: StarshipType) => {
       <div>{starship.model}</div>
       <section>
         {starship.pilots.map((pilotUrl, i) => (
-          <button onClick={() => handleClick(pilotUrl)}>
+          <button onClick={() => handleClick(pilotUrl)} key={`${pilotUrl}${i}`}>
             show pilot {i + 1}
           </button>
         ))}
