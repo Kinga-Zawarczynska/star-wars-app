@@ -1,40 +1,45 @@
 import { Fragment, useEffect, useState } from "react";
 import "./App.scss";
 import PersonCard from "./components/PersonCard";
+import { PEOPLE, PLANETS, STARSHIPS } from "./contants";
 import { fetchApi, fetchNextPage } from "./services/fetchSwapi";
+import { IData } from "./types/Data";
 import { IPerson } from "./types/Person";
 
 function App() {
-  const [param, setParam] = useState("people");
-  const [data, setData] = useState<{
-    count: number | null;
-    next: string | null;
-    results: IPerson[];
-  }>({ count: null, next: null, results: [] });
+  const initialState = {
+    starships: { count: null, next: null, results: [] },
+    people: { count: null, next: null, results: [] },
+  };
+
+  const [param, setParam] = useState(PEOPLE);
+  const [data, setData] = useState<IData>(initialState);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchApi(param)
-      .then((res) => {
-        setData({ count: res.count, next: res.next, results: res.results });
-      })
-      .catch((err) => {
-        console.log(err);
-        setError("Failed to fetch people data. Please try again.");
-      });
+    if (data[param as keyof IData].results.length === 0) {
+      fetchApi(param)
+        .then((res) => {
+          setData({ ...data, [param]: {count: res.count, next: res.next, results: res.results} });
+        })
+        .catch((err) => {
+          console.log(err);
+          setError("Failed to fetch data. Please try again.");
+        });
+    }
   }, [param]);
 
-  const handlePeopleClick = () => setParam("people");
-  const handlePlanetsClick = () => setParam("planets");
-  const handleStarshipsClick = () => setParam("starships");
+  const handlePeopleClick = () => setParam(PEOPLE);
+  const handlePlanetsClick = () => setParam(PLANETS);
+  const handleStarshipsClick = () => setParam(STARSHIPS);
 
   const handleLoadMoreData = () =>
-    fetchNextPage(data.next).then((res) =>
-      setData({
+    fetchNextPage(data[param as keyof IData].next).then((res) =>
+      setData({...data, [param]: {
         count: res?.count,
         next: res?.next,
-        results: [...data.results, ...res?.results],
-      })
+        results: [...data[param as keyof IData].results, ...res?.results],
+      } })
     );
 
   if (error) {
@@ -61,8 +66,8 @@ function App() {
       </header>
       <main className="app__main">
         {param === "people" &&
-          data.results.map((person) => <PersonCard person={person} />)}
-        {data.next && (
+          data[PEOPLE].results.map((person) => <PersonCard person={person} />)}
+        {data[param as keyof IData].next && (
           <button onClick={handleLoadMoreData}>LOAD MORE DATA</button>
         )}
       </main>
