@@ -4,7 +4,7 @@ import List from "./components/List";
 import { PEOPLE, PLANETS, STARSHIPS } from "./contants";
 import { fetchApi, fetchNextPage } from "./services/fetchSwapi";
 import { IData } from "./types/Data";
-import bb8Spinner from './images/bb8-spinner.svg';
+import bb8Spinner from "./images/bb8-spinner.svg";
 
 function App() {
   const initialState = {
@@ -21,6 +21,7 @@ function App() {
 
   useEffect(() => {
     if (data[param as keyof IData].results.length === 0) {
+      setLoading(true);
       fetchApi(param)
         .then((res) => {
           setData({
@@ -56,13 +57,6 @@ function App() {
     return <div>{error}</div>;
   }
 
-  if (loading) {
-    return <div>
-      loading...
-      <img src={bb8Spinner} alt="bb8SpinnerLoading" />
-    </div>
-  }
-
   return (
     <Fragment>
       <header className="app__header">
@@ -83,15 +77,24 @@ function App() {
       </header>
       <main className="app__main">
         <>
-          List of {param}
-          <List
-            param={param}
-            starships={data.starships?.results}
-            people={data.people?.results}
-            planets={data.planets?.results}
-          />
-          {data[param as keyof IData].next && (
-            <button onClick={handleLoadMoreData}>LOAD MORE DATA</button>
+          {loading ? (
+            <div>
+              loading...
+              <img src={bb8Spinner} alt="bb8SpinnerLoading" />
+            </div>
+          ) : (
+            <>
+              List of {param}
+              <List
+                param={param}
+                starships={data.starships?.results}
+                people={data.people?.results}
+                planets={data.planets?.results}
+              />
+              {data[param as keyof IData].next && (
+                <button onClick={handleLoadMoreData}>LOAD MORE DATA</button>
+              )}
+            </>
           )}
         </>
       </main>
