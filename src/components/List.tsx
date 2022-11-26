@@ -1,17 +1,20 @@
-import { PEOPLE, STARSHIPS } from "../contants";
+import { PEOPLE, PLANETS, STARSHIPS } from "../contants";
 import { IData } from "../types/Data";
 import { IPerson } from "../types/Person";
+import { IPLanet } from "../types/Planet";
 import { IStarship } from "../types/Starship";
 import PersonCard from "./PersonCard";
+import PlanetCard from "./PlanetCard";
 import StarshipCard from "./StarshipCard";
 
 type ListType = {
   param: string;
   starships: IStarship[];
   people: IPerson[];
+  planets: IPLanet[]
 };
 
-const List = ({ param, starships, people }: ListType) => {
+const List = ({ param, starships, people, planets }: ListType) => {
   if (param === PEOPLE) {
     return (
       <div>
@@ -27,6 +30,16 @@ const List = ({ param, starships, people }: ListType) => {
       <div>
         {starships.map((starship: IStarship) => (
           <StarshipCard starship={starship} />
+        ))}
+      </div>
+    );
+  }
+
+  if (param === PLANETS) {
+    return (
+      <div>
+        {planets.map((planet: IPLanet) => (
+          <PlanetCard planet={planet} />
         ))}
       </div>
     );

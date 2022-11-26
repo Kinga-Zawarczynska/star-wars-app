@@ -1,16 +1,15 @@
 import { Fragment, useEffect, useState } from "react";
 import "./App.scss";
 import List from "./components/List";
-import PersonCard from "./components/PersonCard";
 import { PEOPLE, PLANETS, STARSHIPS } from "./contants";
 import { fetchApi, fetchNextPage } from "./services/fetchSwapi";
 import { IData } from "./types/Data";
-import { IPerson } from "./types/Person";
 
 function App() {
   const initialState = {
     starships: { count: null, next: null, results: [] },
     people: { count: null, next: null, results: [] },
+    planets: { count: null, next: null, results: [] },
   };
 
   const [param, setParam] = useState(PEOPLE);
@@ -73,9 +72,13 @@ function App() {
       </header>
       <main className="app__main">
         <>
-           List of {param}
-           <List param={param} starships={data.starships?.results} people={data.people?.results} />
-
+          List of {param}
+          <List
+            param={param}
+            starships={data.starships?.results}
+            people={data.people?.results}
+            planets={data.planets?.results}
+          />
           {data[param as keyof IData].next && (
             <button onClick={handleLoadMoreData}>LOAD MORE DATA</button>
           )}
@@ -84,5 +87,4 @@ function App() {
     </Fragment>
   );
 }
-
 export default App;
